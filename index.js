@@ -1,9 +1,10 @@
 const { Bot } = require("grammy");
 
-const token = process.env.BOT_TOKEN;
+// ВСТАВЬ СЮДА ТОКЕН ОТ @BotFather
+const token = "ВСТАВЬ_СЮДА_ТОКЕН_БОТА";
 
-if (!token) {
-  console.error("BOT_TOKEN is not set. Add it in Railway Variables/Secrets.");
+if (!token || token === "ВСТАВЬ_СЮДА_ТОКЕН_БОТА") {
+  console.error("❌ Вставь токен бота в переменную token в index.js");
   process.exit(1);
 }
 
@@ -22,45 +23,47 @@ bot.command("start", async (ctx) => {
   );
 });
 
-bot.command("help", (ctx) =>
-  ctx.reply(
+bot.command("help", async (ctx) => {
+  await ctx.reply(
     "🤖 Помощь\n\n" +
       "/start — главное меню\n" +
       "/ping — проверка бота\n" +
       "/score — твой счёт\n" +
       "/search <запрос> — найти сайт\n\n" +
-      "Пример:\n/search github\n/search wikipedia.org"
-  )
-);
+      "Пример:\n/search github"
+  );
+});
 
-bot.command("ping", (ctx) => ctx.reply("🏓 Pong! Бот работает."));
+bot.command("ping", async (ctx) => {
+  await ctx.reply("🏓 Pong! Бот работает.");
+});
 
-bot.command("score", (ctx) => ctx.reply("🏆 Твой счёт: 0 очков"));
+bot.command("score", async (ctx) => {
+  await ctx.reply("🏆 Твой счёт: 0 очков");
+});
 
 bot.command("search", async (ctx) => {
   const query = ctx.match?.trim();
 
   if (!query) {
-    return ctx.reply("🔎 Напиши, что найти.\n\nПример: /search github");
+    await ctx.reply("🔎 Напиши, что найти.\n\nПример: /search github");
+    return;
   }
 
   const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-
   await ctx.reply(`🔎 Поиск: ${query}\n\nОткрыть результаты:\n${url}`);
 });
 
-bot.on("message:text", (ctx) => {
+bot.on("message:text", async (ctx) => {
   const text = ctx.message.text.trim();
-
   if (text.startsWith("/")) return;
-
-  return ctx.reply("👀 Я тебя услышал! Попробуй /search <запрос> или /help");
+  await ctx.reply("👀 Я тебя услышал! Попробуй /search <запрос> или /help");
 });
 
 bot.catch((err) => {
-  console.error("Bot error:", err.error);
+  console.error("❌ Ошибка бота:", err.error);
 });
 
 bot.start({
-  onStart: () => console.log("🤖 Telegram bot started"),
+  onStart: () => console.log("🤖 Telegram-бот запущен!")
 });
